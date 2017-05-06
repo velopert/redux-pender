@@ -10,7 +10,12 @@ export default function createPenderAction(actionType, promiseCreator) {
             payload: {
                 pend: promiseCreator(payload),
             },
-            meta
+            meta: {
+                // puts copy of the payload in meta
+                _payload: payload,
+                // if meta parameter exists, put it in here
+                ...(meta ? meta : {})
+            }
         }
     }
 }

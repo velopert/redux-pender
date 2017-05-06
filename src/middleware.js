@@ -18,6 +18,7 @@ export default function penderMiddleware(store) {
         if(!payload) return next(action);
 
         const pend = action.payload.pend;
+        if(!pend) return next(action);
         const isPromise = pend.then && pend.catch;
         
         if(!isPromise) {

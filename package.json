@@ -10,7 +10,7 @@
     "babel-preset-stage-0": "^6.24.1"
   },
   "name": "redux-pender",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "redux middleware that manages async actions by using promises",
   "repository": {
     "type": "git",

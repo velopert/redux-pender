@@ -8,22 +8,56 @@ const { PENDING, SUCCESS, FAILURE } = actionTypes;
     when it resolves or rejects, it will turn false 
 */
 
-export default function penderReducer(state = {} , action) {
+export default function penderReducer(state = {
+    pending: {},
+    success: {},
+    failure: {}
+} , action) {
     switch(action.type) {
         case PENDING:
             return {
-                ...state,
-                [action.payload]: true
+                pending: {
+                    ...state.pending,
+                    [action.payload]: true
+                },
+                success: {
+                    ...state.success,
+                    [action.payload]: false
+                },
+                failure: {
+                    ...state.failure,
+                    [action.payload]: false
+                }
             }
         case SUCCESS:
             return {
-                ...state,
-                [action.payload]: false
+                pending: {
+                    ...state.pending,
+                    [action.payload]: false
+                },
+                success: {
+                    ...state.success,
+                    [action.payload]: true
+                },
+                failure: {
+                    ...state.failure,
+                    [action.payload]: false
+                }
             };
         case FAILURE:
             return {
-                ...state,
-                [action.payload]: false
+                pending: {
+                    ...state.pending,
+                    [action.payload]: false
+                },
+                success: {
+                    ...state.success,
+                    [action.payload]: false
+                },
+                failure: {
+                    ...state.failure,
+                    [action.payload]: true
+                }
             }
         default:
             return state;

@@ -72,5 +72,7 @@ export default function penderMiddleware(store) {
                 })
             }
         );
+
+        return pend;
     }
 }

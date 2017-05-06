@@ -1,7 +1,7 @@
 import actionTypes from './action-types';
 import penderize from './penderize';
 
-const [ PENDING, SUCCESS, FAILURE ] = actionTypes;
+const { PENDING, SUCCESS, FAILURE } = actionTypes;
 
 /**
  * Middleware that pends and handles the promises
@@ -67,7 +67,7 @@ export default function penderMiddleware(store) {
                 });
 
                 store.dispatch({
-                    type: FALURE,
+                    type: FAILURE,
                     payload: type
                 })
             }

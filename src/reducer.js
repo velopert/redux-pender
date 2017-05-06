@@ -1,6 +1,6 @@
 import actionTypes from './action-types';
 
-const [ PENDING, SUCCESS, FAILURE ] = actionTypes;
+const { PENDING, SUCCESS, FAILURE } = actionTypes;
 
 /* 
     reducer that manages the penders

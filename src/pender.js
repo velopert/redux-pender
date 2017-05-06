@@ -7,7 +7,7 @@ import penderize from './penderize';
  * @param {function} pendInfo.onSuccess Success handler
  * @param {function} pendInfo.onFailure Failure handler
  */
-export function pender({
+export default function pender({
     type,
     onPending = state => state,
     onSuccess = state => state,

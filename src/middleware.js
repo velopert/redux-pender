@@ -18,7 +18,7 @@ export default function penderMiddleware(store) {
         if(!payload) return next(action);
 
         const pend = action.payload.pend;
-        const isPromise = Promise.resolve(pend) === pend;
+        const isPromise = pend.then && pend.catch;
         
         if(!isPromise) {
             // not a promise

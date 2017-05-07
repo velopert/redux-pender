@@ -1,0 +1,13 @@
+language: node_js
+
+node_js:
+  - stable
+  
+cache:
+  yarn: false
+
+install:
+  - yarn
+
+script:
+  - npm test

@@ -10,7 +10,8 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "jest": "^20.0.0",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "redux-actions": "^2.0.2"
   },
   "name": "redux-pender",
   "version": "1.0.8",
@@ -28,8 +29,5 @@
   "bugs": {
     "url": "https://github.com/velopert/redux-actions/issues"
   },
-  "homepage": "https://github.com/velopert/redux-actions#readme",
-  "dependencies": {
-    "redux-actions": "^2.0.2"
-  }
+  "homepage": "https://github.com/velopert/redux-actions#readme"
 }

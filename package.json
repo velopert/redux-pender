@@ -1,16 +1,19 @@
 {
   "scripts": {
     "build": "babel src --presets=es2015,stage-0 --out-dir dist",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "jest"
   },
   "main": "./dist/index.js",
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "jest": "^20.0.0",
+    "redux": "^3.6.0"
   },
   "name": "redux-pender",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "redux middleware that manages async actions by using promises",
   "repository": {
     "type": "git",
@@ -25,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/velopert/redux-actions/issues"
   },
-  "homepage": "https://github.com/velopert/redux-actions#readme"
+  "homepage": "https://github.com/velopert/redux-actions#readme",
+  "dependencies": {
+    "redux-actions": "^2.0.2"
+  }
 }

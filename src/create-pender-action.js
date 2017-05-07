@@ -14,7 +14,7 @@ export default function createPenderAction(actionType, promiseCreator) {
                 // puts copy of the payload in meta
                 _payload: payload,
                 // if meta parameter exists, put it in here
-                ...(meta ? meta : {})
+                ...(typeof meta === 'object' ? meta : { value: meta })
             }
         }
     }

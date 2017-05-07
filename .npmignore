@@ -1,3 +1,6 @@
 src
 yarn.lock
 test
+.travis.yml
+.babelrc
+.gitignore

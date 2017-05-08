@@ -2,17 +2,15 @@ import penderize from './penderize';
 
 /**
  * Creates the pend handlers
- * @param {object} pendInfo Information about the pend
- * @param {string} pendInfo.type Action Type
- * @param {function} pendInfo.onSuccess Success handler
- * @param {function} pendInfo.onFailure Failure handler
+ * @param {object} pendInfo actionType and handlers { type, onPending, onSuccess, onFailure }
  */
-export default function pender({
-    type,
-    onPending = state => state,
-    onSuccess = state => state,
-    onFailure = state => state
-}) {
+export default function pender(pendInfo) {
+    const {
+        type,
+        onPending = state => state,
+        onSuccess = state => state,
+        onFailure = state => state
+    } = pendInfo
     const penderized = penderize(type);
     return {
         [penderized.PENDING]: (state, action) => onPending(state, action),

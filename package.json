@@ -14,8 +14,8 @@
     "redux-actions": "^2.0.2"
   },
   "name": "redux-pender",
-  "version": "1.0.12",
-  "description": "redux middleware that manages async actions by using promises",
+  "version": "1.0.16",
+  "description": "redux middleware that helps to manages async actions based on promise",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/velopert/redux-pender.git"
@@ -24,7 +24,7 @@
     "redux",
     "promise"
   ],
-  "author": "velopert",
+  "author": "velopert <public.velopert@gmail.com> (https://github.com/velopert)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/velopert/redux-actions/issues"

@@ -64,7 +64,8 @@ export default function penderMiddleware(store) {
                 store.dispatch({
                     type: penderized.FAILURE,
                     payload: error,
-                    meta
+                    meta,
+                    error: true
                 });
 
                 store.dispatch({

@@ -6,7 +6,7 @@ When it comes to asynchronous actions, some of the solutions that you might thin
  - [redux-promise](#redux-promise)
  - [redux-promise-middleware](#redux-promise-middleware)
 
-All these library tries to solve the similar issue - asynchronous actions.
+Each these library tries to solve the similar issue - asynchronous actions.
 Comparisons among libraries above and redux-pender will be illustrated in this document.
 
 ### redux-thunk

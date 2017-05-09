@@ -1,10 +1,10 @@
 ## Comparison
 
 When it comes to asynchronous actions, some of the solutions that you might think of are:
- - redux-thunk
- - redux-saga
- - redux-promise
- - redux-promise-middleware
+ - [redux-thunk](#redux-thunk)
+ - [redux-saga](#redux-saga)
+ - [redux-promise](#redux-promise)
+ - [redux-promise-middleware](#redux-promise-middleware)
 
 All these library tries to solve the similar issue - asynchronous actions.
 Comparisons among libraries above and redux-pender will be illustrated in this document.
@@ -234,7 +234,7 @@ This middleware accepts two kinds of actions.
 
 When the action with promise dispatches, this middleware will dispatch a `PENDING` action first.
 
-```json
+```javascript
 {
     type: 'ACTION_TYPE_PENDING'
 }
@@ -242,7 +242,7 @@ When the action with promise dispatches, this middleware will dispatch a `PENDIN
 
 when the promise resolves:
 
-```json
+```javascript
 {
   "type": "WRITE_MEMO_FULFILLED",
   "payload": {
@@ -252,7 +252,7 @@ when the promise resolves:
 ```
 
 when the promise rejects:
-```json
+```javascript
 {
   "type": "WRITE_MEMO_REJECTED",
   "payload": "there was an error",
@@ -366,7 +366,18 @@ export default handleActions({
 }, initialState)
 ```
 
-To get whether the request is pending, you can access the state of pender reducer.
+If you need to do something when the request starts (rather than changing the request status; pender reducer will do that for you), or handle errors, you just need to add implement `onPending` or `onFailure`.
+
+```javascript
+pender({
+    type: 'ACTION_TYPE',
+    onPending: (state, action) => state, 
+    onSuccess: (state, action) => state,
+    onFailure: (state, action) => state
+})
+```
+
+To get whether the request is pending or not, you can access the state of pender reducer.
 
 ```javascript
 const fetching = store.getState().pender.pending['chat/FETCH_INITIAL_MESSAGES'];

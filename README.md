@@ -83,7 +83,7 @@ import axios from 'axios';
 import { createAction } from 'redux-actions';
 
 const loadPostApi = (postId) => axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}`);
-const LOAD_POST = 'LOAD_POST";
+const LOAD_POST = 'LOAD_POST';
 const loadPost = createAction(LOAD_POST, loadPostApi);
 store.dispatch(loadPost(1));
 ```

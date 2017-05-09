@@ -229,7 +229,7 @@ export default connect(
 
 ## Examples
 
-An example project of using this library is provided in [examples]('examples/') directory.
+An example project of using this library is provided in [examples](examples/) directory.
 If you want to see some more complex example, check out [do-chat](https://github.com/velopert/do-chat). It is a ChatApp project that uses firebase as backend.
 
 ## Contributing

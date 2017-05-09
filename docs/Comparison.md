@@ -210,7 +210,7 @@ This is one of my favorite library, and this has inspired me to make `redux-pend
 
 When a action with a promise is dispatched, `redux-promise-middleware` will automatically attach the suffixes (`_PENDING`, `_FULFILLED`, `_REJECTED`) and dispatch the actions accordingly.
 
-((Check the codes from webpackbin))[https://www.webpackbin.com/bins/-KjgFSXHPnc0OOj6fErw]
+[((Check the codes from webpackbin)](https://www.webpackbin.com/bins/-KjgFSXHPnc0OOj6fErw)
 
 Same codes used in `redux-promise` will also work in `redux-promise-middleware`. You just need to change the logic in the reducer.
 

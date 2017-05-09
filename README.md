@@ -7,5 +7,235 @@
 
 Redux pender is a middleware that helps you to manage asynchronous actions based on promise. It comes with useful tools that help you to handle this even more easier.
 
-This library is inspired from [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware), and this library pretty much works the similar as it. The difference between redux-promise-middleware and this library is that this comes with some handy utils.
+This library is inspired from [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware), and this library pretty much works the similar as it. The difference between redux-promise-middleware and this library is that this comes with some handy utils. To check out detailed comparisons between other libraries, please check [Comparisons](docs/Comparison.md) document
 
+
+## Installation
+
+``` sh
+npm i --save redux-pender
+```
+
+## Usage
+
+### Configure Store
+
+``` javascript
+import { applyMiddleware, createStore, combineReducers } from 'redux';
+import penderMiddleware, { penderReducer } from 'redux-pender';
+
+const reducers = {
+    /*
+        ...your other reducers...
+    */
+    pender: penderReducer
+};
+
+const store = createStore(
+    reducers,
+    applyMiddleware(penderMiddleware())
+);
+```
+
+`penderReducer` is the reducer that tracks the status of your asynchronous actions. 
+
+- When your request is pending, `store.getState().pender.pending[ACTION_NAME]` will turn true. It will set to false when it succeeds or fails.
+- When your request succeeds, `store.getState().pender.success[ACTION_NAME]` will turn true.
+- When your request fails, `store.getState().pender.failure[ACTION_NAME]` will turn true.
+
+If you are currently using `redux-promise` or `redux-promise-middleware` in your project, there will be a collision. To avoid the collision without existing library, pass `{ major: false }` when you initialize the middleware:
+
+```javascript
+penderMiddleware({ major: false })
+```
+
+
+
+### Actions
+pender middleware will process the action when a `Promise` is given as the `payload` of the action:
+```javascript
+{
+    type: 'ACTION_TYPE',
+    payload: Promise.resolve()
+}
+```
+
+If you have set `major` to `false` when you initialize the middleware to avoid the collision with `redux-promise` or `redux-promise-middleware`, the middleware will only accept following action:
+
+```javascript
+{
+    type: 'ACTION_TYPE',
+    payload: {
+        pend: Promise.resolve()
+    }
+}
+```
+
+By default, middleware will accept both of the kinds of actions above.
+
+### Dispatching actions
+
+Since it supports [FSA actions](https://github.com/acdlite/flux-standard-action), you can use `createAction` of [redux-actions](https://github.com/acdlite/redux-actions).
+The second parameter of `createAction` should be a function that returns a Promise.
+
+```javascript
+import axios from 'axios';
+import { createAction } from 'redux-actions';
+
+const loadPostApi = (postId) => axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}`);
+const LOAD_POST = 'LOAD_POST";
+const loadPost = createAction(LOAD_POST, loadPostApi);
+store.dispatch(loadPost(1));
+```
+
+If you are using this middleware as `{major: false}`, you have to use `createPenderAction`
+
+```javascript
+import { createPenderAction } from 'redux-pender';
+const loadPost = createPenderAction(LOAD_POST, loadPostApi);
+```
+
+It pretty much works quite the same, but it puts the Promise at `action.payload.pend`.
+
+### Reducer - handling actions
+
+When you are making your reducer, it works the best when you are using `handleActions` of [redux-actions](https://github.com/acdlite/redux-actions).
+Handling action is done by using `pender`. 
+
+> For people who don't know what `handleActions` does, it handles action by creating an object, rather than a `switch`.
+
+```javascript
+
+import { handleActions } from 'redux-actions';
+import { pender } from 'redux-pender';
+
+const initialState = { 
+    post: null
+}
+export default handleActions({
+    ...pender({
+        type: LOAD_POST,
+        onSuccess: (state, action) => {
+            return {
+                post: action.payload.data
+            };
+        }
+    }),
+    // ... other action handlers...
+}, initialState);
+```
+
+Do you want to do something when the action starts or fails? It is simple.
+
+```javascript
+...pender({
+    type: LOAD_POST,
+    onPending: (state, action) => {
+        return state; // do something
+    },
+    onSuccess: (state, action) => {
+        return {
+            post: action.payload.data
+        }
+    },
+    onFailure: (state, action) => {
+        return state; // do something
+    }
+}, initialState)
+```
+
+When you omit one of those function, `(state, action) => state` will be the default value.
+Additionally, it is not recommended to manage the status of request in your own reducer, because the penderReducer will do this for you. You just need to care about the result of your task in your reducer.
+
+#### Not using handleActions?
+
+Are you not using handleActions? It is fine. You can still use the pender:
+
+```javascript
+const penders = {
+    ...pender({
+        type: LOAD_POST,
+        onSuccess: (state, action) => {
+            return {
+                post: action.payload.data
+            };
+        }
+    }),
+    // another penders... 
+}
+
+
+export default function reducer(state, action) {
+    if(penders[action.type]) {
+        return penders[action.type](state, action);
+    }
+
+    switch(action.type) {
+        /* your own reducer logic.. */
+    }
+}
+```
+
+#### Not using spread operator (`...`) ?
+If you are not using spread operator, don't worry. You can use `Object.assign` alternatively.
+```javascript
+const requests = Object.assign(
+    pender(...), 
+    pender(...)
+);
+
+// same codes...
+```
+
+
+### Using in your React Component
+
+```javascript
+import React, { Component } from 'react';
+import * as actions from './actions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+class Example extends Component {
+    render() {
+        const { loading, post } = this.props;
+
+        return (
+            <div>
+                {
+                    loading 
+                    ? 'Loading...' :
+                    (
+                        <div>
+                            <h1>{post.title}</h1>
+                            <p>{post.body}</p>
+                        </div>
+                    )
+                }
+            </div>
+        );
+    }
+}
+
+export default connect(
+    state => ({
+        post: state.blog.post,
+        loading: state.pender.pending['LOAD_POST']
+    })
+)(Example)
+
+```
+
+
+## Examples
+
+An example project of using this library is provided in [examples]('examples/') directory.
+If you want to see some more complex example, check out [do-chat](https://github.com/velopert/do-chat). It is a ChatApp project that uses firebase as backend.
+
+## Contributing
+
+Contributions, questions, pull requests are all welcomed.
+
+## License
+
+Copyright (c) 2017. [Velopert](https://velopert.com/) [Licensed with The MIT License (MIT)](http://opensource.org/licenses/MIT)

@@ -220,14 +220,14 @@ This middleware accepts two kinds of actions.
 // type 1
 { 
     type: 'ACTION_TYPE',
-    payload: new Promise()
+    payload: Promise.resolve()
 }
 
 //type 2
 {
     type: 'ACTION_TYPE',
     payload {
-        promise: new Promise()
+        promise: Promise.resolve()
     }
 }
 ```

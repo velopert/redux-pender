@@ -43,7 +43,7 @@ const store = createStore(
 - When your request succeeds, `store.getState().pender.success[ACTION_NAME]` will turn true.
 - When your request fails, `store.getState().pender.failure[ACTION_NAME]` will turn true.
 
-If you are currently using `redux-promise` or `redux-promise-middleware` in your project, there will be a collision. To avoid the collision without existing library, pass `{ major: false }` when you initialize the middleware:
+If you are currently using `redux-promise` or `redux-promise-middleware` in your project, there will be a collision. To avoid the collision without uninstalling existing library, pass `{ major: false }` when you initialize the middleware:
 
 ```javascript
 penderMiddleware({ major: false })
@@ -110,7 +110,7 @@ import { handleActions } from 'redux-actions';
 import { pender } from 'redux-pender';
 
 const initialState = { 
-    post: null
+    post: {}
 }
 export default handleActions({
     ...pender({
@@ -197,21 +197,31 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 class Example extends Component {
+
+    componentDidMount() {
+        this.fetchData();
+    }
+
+    async fetchData() {
+        const { Actions } = this.props;
+        try {
+            await Actions.loadPost(1);
+            console.log('data is fetched!');
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
     render() {
         const { loading, post } = this.props;
 
         return (
             <div>
-                {
-                    loading 
-                    ? 'Loading...' :
-                    (
-                        <div>
-                            <h1>{post.title}</h1>
-                            <p>{post.body}</p>
-                        </div>
-                    )
-                }
+                { loading && 'Loading...' }
+                <div>
+                    <h1>{post.title}</h1>
+                    <p>{post.body}</p>
+                </div>
             </div>
         );
     }
@@ -221,6 +231,9 @@ export default connect(
     state => ({
         post: state.blog.post,
         loading: state.pender.pending['LOAD_POST']
+    }),
+    dispatch => ({
+        Actions: bindActionCreators(actions, dispatch)
     })
 )(Example)
 
@@ -234,7 +247,7 @@ If you want to see some more complex example, check out [do-chat](https://github
 
 ## Contributing
 
-Contributions, questions, pull requests are all welcomed.
+Contributions, questions and pull requests are all welcomed.
 
 ## License
 

@@ -1,4 +1,4 @@
-import penderMiddleware, { penderReducer, createPenderAction, pender } from '../src';
+import penderMiddleware, { penderReducer, createPenderAction, pender, resetPender } from '../src';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
@@ -56,4 +56,8 @@ test('entire flow is working', async () => {
     expect(store.getState().pender.pending[ACTION_TYPE]).toBe(false);
     expect(store.getState().pender.success[ACTION_TYPE]).toBe(true);
     expect(store.getState().myReducer).toBe(true);
+
+    // test reset
+    await store.dispatch(resetPender());
+    expect(Object.keys(store.getState().pender.success).length).toBe(0);
 })

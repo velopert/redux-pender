@@ -1,21 +1,24 @@
 /**
  * Creates a pender action
- * @param {*} actionType 
- * @param {*} promiseCreator 
+ * @param {*} actionType type of the action
+ * @param {*} promiseCreator function that creates promise
+ * @param {func} [metaCreator] function that creates meta
  */
-export default function createPenderAction(actionType, promiseCreator) {
-    return function(payload, meta) {
+export default function createPenderAction(actionType, promiseCreator, metaCreator = payload => payload) {
+    return function(payload) {
+
+        // generate the pend and meta
+        const pend = promiseCreator(payload);
+        const meta = metaCreator(payload);
+
         return {
             type: actionType,
             payload: {
                 pend: promiseCreator(payload),
             },
-            meta: {
-                // puts copy of the payload in meta
-                _payload: payload,
-                // if meta parameter exists, put it in here
-                ...(typeof meta === 'object' ? meta : { value: meta })
-            }
+            ...(meta ? {meta: meta} : {}) // insert meta here when it is not undefined
         }
     }
 }
+
+createPenderAction

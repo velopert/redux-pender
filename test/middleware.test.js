@@ -7,7 +7,7 @@ let store = null;
 test('successfully initializes store with middleware', () => {
     store = createStore(
         reducer,
-        applyMiddleware(middleware)
+        applyMiddleware(middleware())
     );
 
     expect(store.getState()).toBeTruthy();

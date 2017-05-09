@@ -2,8 +2,7 @@ import createPenderAction from '../src/create-pender-action';
 
 const promiseCreator = (value) => Promise.resolve(value);
 const actionCreator = createPenderAction('ACTION_TYPE', promiseCreator);
-const action = actionCreator('payload', 'meta');
-const anotherAction = actionCreator('payload', { object: true })
+const action = actionCreator('payload');
 
 test('creates valid actionCreator', () => {
     expect(action).toBeTruthy();
@@ -14,11 +13,5 @@ test('has valid promise as payload', () => {
 })
 
 test('has valid meta', () => {
-    expect(action.meta._payload).toBe('payload');
-    expect(action.meta.value).toBe('meta');
+    expect(action.meta).toBe('payload');
 })
-
-test('has valid meta when it is an object', () => {
-    expect(anotherAction.meta.object).toBe(true);
-})
-

@@ -5,29 +5,57 @@ const { PENDING, SUCCESS, FAILURE } = actionTypes;
 
 /**
  * Middleware that pends and handles the promises
- * @param {*} store 
+ * @param {object} config
+ * @returns {function} middleware
  */
-export default function penderMiddleware(store) {
-    return next => action => {
-        /* 
-            Check whether the middleware should handle this action
-            action.payload.pend should be assigned as a Promise instance
-        */
+export default function penderMiddleware(config = { major: true }) {
+    
+    return store => next => action => {
 
-        const { payload } = action;
-        if(!payload) return next(action);
 
-        const pend = action.payload.pend;
-        if(!pend) return next(action);
-        const isPromise = pend.then && pend.catch;
-        
-        if(!isPromise) {
-            // not a promise
-            return next(action);
+        /**
+         * checks whether the given parameter is a promise
+         * 
+         * @param {object} promise 
+         * @returns {boolean} 
+         */
+        function isPromise(promise) {
+            if(!promise) return false;
+            return promise.then && promise.catch;
         }
 
-        const { type, meta } = action;
-        const penderized = penderize(type);
+        /**
+         * extracts promise from the action
+         * 
+         * @param {object} action 
+         * @returns {Promise} promise
+         */
+        function getPromise(action) {
+            const { payload } = action;
+
+            if(!payload) return null;  // there is no payload
+            
+            // when 'major' option is true
+            if(config.major === true) {
+                if(isPromise(payload)) return payload;
+            }
+
+            // case when major is false
+            const { pend } = action.payload;
+            if(isPromise(pend)) return pend;
+
+            return null;
+        }
+
+        
+        const promise = getPromise(action); // get the promise from the action
+        if(!promise) return next(action); // if there is no promise, skip this action
+
+
+        
+        const { type, meta } = action; // get the details of the action
+
+        const penderized = penderize(type); // create the penderized action types
 
 
         // inform that the promise has started
@@ -36,13 +64,17 @@ export default function penderMiddleware(store) {
             meta
         });
 
+        // log this in pender reducer
         store.dispatch({
             type: PENDING,
             payload: type
         })
 
-        // handles the promise
-        pend.then(
+
+
+        // handle the promise
+
+        promise.then(
             (result) => {
                 // promise is resolved
                 // result will be assigned as payload
@@ -52,6 +84,7 @@ export default function penderMiddleware(store) {
                     meta
                 });
 
+                // log this in pender reducer
                 store.dispatch({
                     type: SUCCESS,
                     payload: type
@@ -68,6 +101,7 @@ export default function penderMiddleware(store) {
                     error: true
                 });
 
+                // log this in pender reducer
                 store.dispatch({
                     type: FAILURE,
                     payload: type
@@ -75,6 +109,6 @@ export default function penderMiddleware(store) {
             }
         );
 
-        return pend;
+        return promise;
     }
 }

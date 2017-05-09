@@ -236,7 +236,6 @@ export default connect(
         Actions: bindActionCreators(actions, dispatch)
     })
 )(Example)
-
 ```
 
 

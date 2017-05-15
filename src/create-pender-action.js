@@ -14,7 +14,7 @@ export default function createPenderAction(actionType, promiseCreator, metaCreat
         return {
             type: actionType,
             payload: {
-                pend: promiseCreator(payload),
+                pend
             },
             ...(meta ? {meta: meta} : {}) // insert meta here when it is not undefined
         }

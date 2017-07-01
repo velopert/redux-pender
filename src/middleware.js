@@ -92,6 +92,10 @@ export default function penderMiddleware(config = { major: true }) {
             }
         ).catch(
             (error) => {
+                if(process.env.NODE_ENV === 'development') {
+                    // print error in development environment
+                    console.error(error);
+                }
                 // promise is rejected
                 // error will be assigned as payload
                 store.dispatch({

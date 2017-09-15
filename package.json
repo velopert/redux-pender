@@ -14,7 +14,11 @@
     "redux-actions": "^2.0.2"
   },
   "name": "redux-pender",
+<<<<<<< HEAD
   "version": "1.1.3",
+=======
+  "version": "1.1.2",
+>>>>>>> c02f72576df6ecbd5419b60fbd660f2cd82efe91
   "description": "redux middleware that helps to manages async actions based on promise",
   "repository": {
     "type": "git",

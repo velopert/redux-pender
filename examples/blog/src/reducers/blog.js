@@ -16,6 +16,13 @@ export default handleActions({
       onSuccess: (state, action) => ({
         ...state,
         post: action.payload.data
+      }),
+      onCancel: (state, action) => ({
+        ...state,
+        post: {
+          title: 'cancelled',
+          body: 'cancelled'
+        }
       })
   }),
   [SHOW_NEXT]: (state, action) => ({

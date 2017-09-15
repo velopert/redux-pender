@@ -1939,6 +1939,10 @@ eventemitter3@1.x.x:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"
 
+eventemitter3@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-2.0.3.tgz#b5e1079b59fb5e1ba2771c0a993be060a58c99ba"
+
 events@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
@@ -4375,9 +4379,11 @@ redux-logger@^3.0.1:
   dependencies:
     deep-diff "0.3.4"
 
-redux-pender@^1.0.18:
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/redux-pender/-/redux-pender-1.0.18.tgz#8f8f4e2f0a025b5ac9d9dd52db0ae6febefa61d0"
+redux-pender@next:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/redux-pender/-/redux-pender-1.1.1.tgz#ce52d3a11b4118497a9a31df9e7976174abd9aae"
+  dependencies:
+    eventemitter3 "^2.0.3"
 
 redux@^3.6.0:
   version "3.6.0"

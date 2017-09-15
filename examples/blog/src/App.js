@@ -5,28 +5,44 @@ import * as actions from './actions';
 
 
 class App extends Component {
-    componentDidMount() {
+
+    cancel = null
+
+    loadPost = (id) => {
         const { Actions } = this.props;
-        Actions.loadPost(1);
+        const p = Actions.loadPost(id);
+        this.cancel = p.cancel;
+        return p;
+    }
+
+    componentDidMount() {
+        this.loadPost(1);
+    }
+
+    handleCancel = () => {
+        if(this.cancel) {
+            this.cancel();
+            this.cancel = null;
+        }
     }
     
-    handlePrev = () => {
+    handlePrev = async () => {
         const { Actions, id } = this.props;
 
         try {
             Actions.showPrev();
-            Actions.loadPost(id + 1);
+            await this.loadPost(id - 1);
         } catch (e) {
             console.log(e);
         }
     }
 
-    handleNext = () => {
+    handleNext = async () => {
         const { Actions, id } = this.props;
 
         try {
             Actions.showNext();
-            Actions.loadPost(id + 1);
+            await this.loadPost(id + 1);
         } catch (e) {
             console.log(e);
         }
@@ -34,13 +50,14 @@ class App extends Component {
 
     render() {
         const { post, id, loading, error } = this.props;
-        const { handlePrev, handleNext } = this;
+        const { handlePrev, handleNext, handleCancel } = this;
 
         return (
             <div>
                 <button onClick={handlePrev}>prev</button>
                 {id}
                 <button onClick={handleNext}>next</button>
+                <button onClick={handleCancel}>cancel</button>
 
                 {
                     loading && 'Loading...'

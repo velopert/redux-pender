@@ -5,9 +5,9 @@
 
 ## Introduction 
 
-Redux pender is a middleware that helps you to manage asynchronous actions based on promise. It comes with useful tools that help you to handle this even more easier.
+Redux pender is a middleware that helps you to manage asynchronous actions based on promise. It comes with useful tools that help you to handle this even more easier. 
 
-This library is inspired from [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware), and this library pretty much works the similar as it. The difference between redux-promise-middleware and this library is that this comes with some handy utils. To check out detailed comparisons between other libraries, please check [Comparisons](docs/Comparison.md) document
+This library is inspired from [redux-promise-middleware](https://github.com/pburtchaell/redux-promise-middleware). The difference between redux-promise-middleware and this library is that this comes with some handy utils. Additionally, it also handles the cancellation of the promise-based action. To check out detailed comparisons between other libraries, please check [Comparisons](docs/Comparison.md) document
 
 
 ## Installation
@@ -95,7 +95,7 @@ import { createPenderAction } from 'redux-pender';
 const loadPost = createPenderAction(LOAD_POST, loadPostApi);
 ```
 
-It pretty much works quite the same, but it puts the Promise at `action.payload.pend`.
+It pretty much works quite the same, but it puts the Promise at `action.payload.pend`. 
 
 ### Reducer - handling actions
 
@@ -187,6 +187,24 @@ const requests = Object.assign(
 // same codes...
 ```
 
+### Cancellation
+Cancelling the promise based action is very simple in redux-pender. You just have to call `.cancel()` from the returned value of your promise based action creator.
+
+```javascript
+const p = loadPost(1);
+p.cancel();
+```
+
+When `cancel` is executed, redux-pender middleware will dispatch `ACTION_TYPE_CANCEL`. You can handle that action manually or configure `onCancel` in the action pender.
+
+```javascript
+...pender({
+    type: LOAD_POST,
+    onCancel: (state, action) => {
+        return state; // do something
+    }
+}, initialState)
+```
 
 ### Using in your React Component
 

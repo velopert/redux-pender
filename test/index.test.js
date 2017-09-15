@@ -96,7 +96,10 @@ test('entire flow is working (major)', async () => {
     } catch (e) {
 
     }
+    
+    await sleep(100);
 
+    console.log(store.getState());
     expect(store.getState().myReducer).toBe('cancelled');
 });
 

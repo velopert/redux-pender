@@ -104,6 +104,7 @@ export default function penderMiddleware(config = { major: true }) {
             return new Promise((resolve, reject) => {
                 handleCancel = (id) => {
                     if(id === penderId) {
+                        cancelled = true;
                         unsubscribe();
                         store.dispatch({
                             type: CANCEL,

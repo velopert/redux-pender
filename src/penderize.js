@@ -6,6 +6,7 @@ export default function penderize(type) {
     return {
         PENDING: `${type}_PENDING`,
         SUCCESS: `${type}_SUCCESS`,
-        FAILURE: `${type}_FAILURE`
+        FAILURE: `${type}_FAILURE`,
+        CANCEL: `${type}_CANCEL`
     }
 }

@@ -5,17 +5,23 @@ import penderize from './penderize';
  * @param {object} pendInfo actionType and handlers { type, onPending, onSuccess, onFailure }
  */
 export default function pender(pendInfo) {
-    const {
+    let {
         type,
         onPending = state => state,
         onSuccess = state => state,
-        onFailure = state => state
+        onFailure = state => state,
+        onCancel = state => state,
+        onError,
     } = pendInfo
     const penderized = penderize(type);
+    // sets alias for onFailure
+    if(onError) onFailure = onError;
+    
     return {
         [penderized.PENDING]: (state, action) => onPending(state, action),
         [penderized.SUCCESS]: (state, action) => onSuccess(state, action),
-        [penderized.FAILURE]: (state, action) => onFailure(state, action)
+        [penderized.FAILURE]: (state, action) => onFailure(state, action),
+        [penderized.CANCEL]: (state, action) => onCancel(state, action)
     }
 }
 

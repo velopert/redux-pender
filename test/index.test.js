@@ -2,6 +2,16 @@ import penderMiddleware, { penderReducer, createPenderAction, pender, resetPende
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { handleActions, createAction } from 'redux-actions';
 
+const sleep = (ms) => {
+    return new Promise(
+        resolve => {
+            setTimeout(
+               resolve, ms
+            )
+        }
+    );
+}
+
 test('entire flow is working (major)', async () => {
     const promiseCreator = ({triggerError, value}) => {
         const p = new Promise((resolve, reject) => {
@@ -26,6 +36,9 @@ test('entire flow is working (major)', async () => {
             type: ACTION_TYPE,
             onSuccess: (state, action) => {
                 return action.payload;
+            },
+            onCancel: (state, action) => {
+                return 'cancelled';
             }
         })
     }, null)
@@ -41,14 +54,8 @@ test('entire flow is working (major)', async () => {
 
     const promise = store.dispatch(actionCreator({triggerError: false, value: true}));
 
-    // sleep 50ms 
-    await new Promise(
-        resolve => {
-            setTimeout(
-               resolve, 50
-            )
-        }
-    )
+
+    await sleep(50);
 
     expect(store.getState().pender.pending[ACTION_TYPE]).toBe(true);
 
@@ -61,7 +68,37 @@ test('entire flow is working (major)', async () => {
     // test reset
     await store.dispatch(resetPender());
     expect(Object.keys(store.getState().pender.success).length).toBe(0);
-})
+
+    /* test promise rejection */
+    const promise2 = store.dispatch(actionCreator({triggerError: true, value: true}));
+
+    // sleep 50ms 
+    await sleep(50);
+
+    try {
+        await promise2;
+    } catch (e) {
+
+    }
+
+    await sleep(0);
+
+    expect(store.getState().pender.failure[ACTION_TYPE]).toBe(true);
+
+    await store.dispatch(resetPender());
+
+    // test promise cancellation
+    const promise3 = store.dispatch(actionCreator({triggerError: false, value: true}));
+    await sleep(10);
+    promise3.cancel();
+    try {
+        await promise3;
+    } catch (e) {
+
+    }
+
+    expect(store.getState().myReducer).toBe('cancelled');
+});
 
 
 test('entire flow is working (!major)', async () => {

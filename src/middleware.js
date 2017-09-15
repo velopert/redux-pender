@@ -1,7 +1,15 @@
 import actionTypes from './action-types';
 import penderize from './penderize';
+import EventEmitter from 'eventemitter3';
 
-const { PENDING, SUCCESS, FAILURE } = actionTypes;
+const EE = new EventEmitter();
+
+const { PENDING, SUCCESS, FAILURE, CANCEL } = actionTypes;
+
+let _id = 0;
+function generatePenderId() {
+    return _id++
+}
 
 /**
  * Middleware that pends and handles the promises
@@ -73,9 +81,61 @@ export default function penderMiddleware(config = { major: true }) {
 
 
         // handle the promise
+        let cancelled = false;
+        const penderId = generatePenderId();
 
-        promise.then(
+        let handleCancel = null;
+        let handleResolve = null;
+
+        const unsubscribe = () => {
+            EE.removeListener('cancel', handleCancel);
+            EE.removeListener('resolve', handleResolve);
+        };
+
+        const cancel = () => {
+            EE.emit('cancel', penderId);
+        };
+
+        const resolveCancellation = () => {
+            EE.emit('resolve', penderId);
+        }
+        
+        const cancellation = (type) => {
+            return new Promise((resolve, reject) => {
+                handleCancel = (id) => {
+                    if(id === penderId) {
+                        unsubscribe();
+                        store.dispatch({
+                            type: CANCEL,
+                            payload: type
+                        })
+                        store.dispatch({
+                            type: penderized.CANCEL,
+                            meta
+                        });
+                        reject(new Error(`${type}(${id}) is cancelled`));
+                    }
+                };
+
+                handleResolve = (id) => {
+                    if(id === penderId) {
+                        unsubscribe();
+                        resolve();
+                    }
+                };
+
+
+                EE.once('cancel', handleCancel);
+                EE.once('resolve', handleResolve);
+            })
+        };
+
+        
+        const p = promise.then(
             (result) => {
+                if(cancelled) return;
+                resolveCancellation();
+
                 // promise is resolved
                 // result will be assigned as payload
                 store.dispatch({
@@ -92,6 +152,9 @@ export default function penderMiddleware(config = { major: true }) {
             }
         ).catch(
             (error) => {
+                if(cancelled) return;
+                resolveCancellation();
+
                 if(process.env.NODE_ENV === 'development') {
                     // print error in development environment
                     console.error(error);
@@ -110,9 +173,14 @@ export default function penderMiddleware(config = { major: true }) {
                     type: FAILURE,
                     payload: type
                 })
+
+                throw(error);
             }
         );
 
-        return promise;
+        const cancellablePromise = Promise.race([p, cancellation(type)]);
+        cancellablePromise.cancel = cancel;
+
+        return cancellablePromise;
     }
 }

@@ -1,6 +1,6 @@
 import actionTypes from './action-types';
 
-const { PENDING, SUCCESS, FAILURE, RESET } = actionTypes;
+const { PENDING, SUCCESS, FAILURE, RESET, CANCEL } = actionTypes;
 
 /* 
     reducer that manages the penders
@@ -60,7 +60,22 @@ export default function penderReducer(state = initialState, action) {
                     ...state.failure,
                     [action.payload]: true
                 }
-            }
+            };
+        case CANCEL: 
+            return {
+                pending: {
+                    ...state.pending,
+                    [action.payload]: false
+                },
+                success: {
+                    ...state.success,
+                    [action.payload]: false
+                },
+                failure: {
+                    ...state.failure,
+                    [action.payload]: false
+                }
+            };
         case RESET: 
             return initialState;
         default:

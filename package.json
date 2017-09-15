@@ -14,7 +14,7 @@
     "redux-actions": "^2.0.2"
   },
   "name": "redux-pender",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "redux middleware that helps to manages async actions based on promise",
   "repository": {
     "type": "git",
@@ -32,5 +32,8 @@
   "files": [
     "lib"
   ],
-  "homepage": "https://github.com/velopert/redux-actions#readme"
+  "homepage": "https://github.com/velopert/redux-actions#readme",
+  "dependencies": {
+    "eventemitter3": "^2.0.3"
+  }
 }

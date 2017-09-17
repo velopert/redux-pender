@@ -149,7 +149,9 @@ export default function penderMiddleware(config = { major: true }) {
                 store.dispatch({
                     type: SUCCESS,
                     payload: type
-                })
+                });
+
+                return result;
             }
         ).catch(
             (error) => {

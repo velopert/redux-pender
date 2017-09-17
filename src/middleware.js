@@ -149,9 +149,7 @@ export default function penderMiddleware(config = { major: true }) {
                 store.dispatch({
                     type: SUCCESS,
                     payload: type
-                });
-
-                return result;
+                })
             }
         ).catch(
             (error) => {
@@ -176,12 +174,10 @@ export default function penderMiddleware(config = { major: true }) {
                     type: FAILURE,
                     payload: type
                 })
-
-                throw(error);
             }
         );
 
-        const cancellablePromise = Promise.race([p, cancellation(type)]);
+        const cancellablePromise = Promise.race([promise, cancellation(type)]);
         cancellablePromise.cancel = cancel;
 
         return cancellablePromise;

@@ -70,19 +70,13 @@ test('entire flow is working (major)', async () => {
     expect(Object.keys(store.getState().pender.success).length).toBe(0);
 
     /* test promise rejection */
-    const promise2 = store.dispatch(actionCreator({triggerError: true, value: true}));
-
-    // sleep 50ms 
-    await sleep(50);
-
     try {
-        await promise2;
+        await store.dispatch(actionCreator({triggerError: true, value: true}));
     } catch (e) {
 
     }
 
     await sleep(0);
-
     expect(store.getState().pender.failure[ACTION_TYPE]).toBe(true);
 
     await store.dispatch(resetPender());

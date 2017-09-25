@@ -1,4 +1,4 @@
-import penderMiddleware, { penderReducer, createPenderAction, pender, resetPender } from '../src';
+import penderMiddleware, { penderReducer, createPenderAction, pender, resetPender, createServerPender } from '../src';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { handleActions, createAction } from 'redux-actions';
 
@@ -11,6 +11,48 @@ const sleep = (ms) => {
         }
     );
 }
+
+test('for server use', async () => {
+    const promiseCreator = ({triggerError, value}) => {
+        const p = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if(triggerError) {
+                    reject(value);
+                } else {
+                    resolve(value);
+                }
+            }, 100)
+        });
+        return p;
+    }
+    
+
+    const ACTION_TYPE = 'ACTION_TYPE';
+    const actionCreator = createPenderAction(ACTION_TYPE, promiseCreator);
+
+    const myReducer = handleActions({
+        ...pender({
+            type: ACTION_TYPE,
+            onSuccess: (state, action) => {
+                return action.payload;
+            }
+        })
+    }, null)
+
+    const reducers = combineReducers({
+        myReducer,
+        pender: penderReducer
+    });
+
+    const serverPender = createServerPender();
+    const store = createStore(reducers, applyMiddleware(penderMiddleware({major: true, serverPender})));
+
+    expect(store).toBeTruthy(); 
+
+    store.dispatch(actionCreator({triggerError: false, value: true}));
+    await serverPender.wait();
+    expect(store.getState().pender.success[ACTION_TYPE]).toBe(true);
+})
 
 test('entire flow is working (major)', async () => {
     const promiseCreator = ({triggerError, value}) => {

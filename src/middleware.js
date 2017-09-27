@@ -18,7 +18,12 @@ function generatePenderId() {
  * @param {object} config
  * @returns {function} middleware
  */
-export default function penderMiddleware(config = { major: true, serverPender: false }) {
+export default function penderMiddleware(config = { major: true, serverPender: null }) {
+    const {
+        major = true, 
+        serverPender = null
+    } = config;
+
     return store => {
         return next => action => {
             /**
@@ -44,7 +49,7 @@ export default function penderMiddleware(config = { major: true, serverPender: f
                 if(!payload) return null;  // there is no payload
                 
                 // when 'major' option is true
-                if(config.major === true) {
+                if(major === true) {
                     if(isPromise(payload)) return payload;
                 }
 
@@ -181,8 +186,8 @@ export default function penderMiddleware(config = { major: true, serverPender: f
             cancellablePromise.cancel = cancel;
             
 
-            if(config.serverPender) {
-                config.serverPender.register(cancellablePromise);
+            if(serverPender) {
+                serverPender.register(cancellablePromise);
             }
 
             return cancellablePromise;

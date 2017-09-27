@@ -1,4 +1,4 @@
-import actionTypes from './action-types';
+import actionTypes from './actionTypes';
 
 const { PENDING, SUCCESS, FAILURE, RESET, CANCEL } = actionTypes;
 

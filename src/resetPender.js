@@ -1,4 +1,4 @@
-import actionTypes from './action-types';
+import actionTypes from './actionTypes';
 
 /**
  * action creator for reset

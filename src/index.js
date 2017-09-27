@@ -1,9 +1,9 @@
 import middleware from './middleware';
 import penderReducer from './reducer';
-import createPenderAction from './create-pender-action';
+import createPenderAction from './createPenderAction';
 import pender from './pender';
-import resetPender from './reset-pender';
-import createServerPender from './server-pender';
+import resetPender from './resetPender';
+import createServerPender from './serverPender';
 
 
 export default middleware;

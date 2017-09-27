@@ -1,4 +1,4 @@
-import createPenderAction from '../src/create-pender-action';
+import createPenderAction from '../src/createPenderAction';
 
 const promiseCreator = (value) => Promise.resolve(value);
 const actionCreator = createPenderAction('ACTION_TYPE', promiseCreator);

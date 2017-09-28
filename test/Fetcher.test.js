@@ -1,6 +1,6 @@
-import fetcher from '../src/fetcher';
+import Fetcher from '../src/Fetcher';
 
-test('fetcher', () => {
+test('Fetcher', () => {
   let state = {
     params: null,
     query: null
@@ -27,8 +27,8 @@ test('fetcher', () => {
     }
   ];
 
-  fetcher.init(fetchConfig);
-
+  const fetcher = new Fetcher(fetchConfig);
+  
   fetcher.process('/item/1/hello');
   expect(state.params.itemId).toBe('1');
   expect(state.params.name).toBe('hello');

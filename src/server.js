@@ -1,7 +1,7 @@
 import ServerPender from './ServerPender';
-import fetcher from './fetcher';
+import Fetcher from './Fetcher';
 
 export {
   ServerPender, 
-  fetcher
+  Fetcher
 };

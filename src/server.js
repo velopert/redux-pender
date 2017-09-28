@@ -1,2 +1,7 @@
-export { default as ServerPender } from './ServerPender';
-export { default as fetcher } from './fetcher';
+import ServerPender from './ServerPender';
+import fetcher from './fetcher';
+
+export {
+  ServerPender, 
+  fetcher
+};

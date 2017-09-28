@@ -1,6 +1,8 @@
 import penderMiddleware, { penderReducer, createPenderAction, pender, resetPender, createServerPender } from '../src';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { handleActions, createAction } from 'redux-actions';
+import ServerPender from '../src/ServerPender';
+
 
 const sleep = (ms) => {
     return new Promise(
@@ -44,12 +46,12 @@ test('for server use', async () => {
         pender: penderReducer
     });
 
-    const serverPender = createServerPender();
+    const serverPender = new ServerPender();
     const store = createStore(reducers, applyMiddleware(penderMiddleware({major: true, serverPender})));
 
     expect(store).toBeTruthy(); 
 
-    store.dispatch(actionCreator({triggerError: false, value: true}));
+    store.dispatch(actionCreator({triggerError: false, value: true}))
     await serverPender.wait();
     expect(store.getState().pender.success[ACTION_TYPE]).toBe(true);
 })

@@ -1,7 +1,6 @@
 import actionTypes from './actionTypes';
 import penderize from './penderize';
 import EventEmitter from 'eventemitter3';
-import createServerPender from './serverPender';
 
 
 const EE = new EventEmitter();

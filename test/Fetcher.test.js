@@ -38,4 +38,7 @@ test('Fetcher', () => {
 
   fetcher.process('/theme/basic/123');
   expect(state.params.id).toBe('123');
+
+  fetcher.process('/themes?test=hello');
+  expect(state.query.test).toBe('hello');
 })

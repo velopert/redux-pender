@@ -1,4 +1,5 @@
 import pathToRegexp from 'path-to-regexp';
+import queryString from 'query-string';
 
 function matchPattern(path, pattern) {
   const keys = [];
@@ -40,7 +41,11 @@ class Fetcher {
     return null;
   }
 
-  process(path, query) {
+  process(url) {
+    const sp = url.split('?');
+    const path = sp[0];
+    const query = queryString.parse(sp.slice(1, sp.length).join(''));
+
     const match = this.enroute(path);
     if(!match) return null;
 

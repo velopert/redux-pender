@@ -3,8 +3,6 @@ import penderize from './penderize';
 import EventEmitter from 'eventemitter3';
 
 
-const EE = new EventEmitter();
-
 const { PENDING, SUCCESS, FAILURE, CANCEL } = actionTypes;
 
 let _id = 0;
@@ -18,6 +16,8 @@ function generatePenderId() {
  * @returns {function} middleware
  */
 export default function penderMiddleware(config = { major: true, serverPender: null }) {
+    const EE = new EventEmitter();
+    
     const {
         major = true, 
         serverPender = null

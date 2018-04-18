@@ -1,4 +1,4 @@
-import penderMiddleware, { penderReducer, createPenderAction, pender, resetPender, createServerPender } from '../src';
+import penderMiddleware, { penderReducer, createPenderAction, pender, resetPender } from '../src';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { handleActions, createAction } from 'redux-actions';
 

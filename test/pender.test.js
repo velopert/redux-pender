@@ -1,24 +1,26 @@
 import pender from '../src/pender';
 
-test('default handlers of pender is working properly', () => {
+describe('pender', () => {
+  it('default handlers of pender is working properly', () => {
     const penderActionHandlers = pender({
-        type: 'ACTION_TYPE'
-    })
+      type: 'ACTION_TYPE',
+    });
 
-    expect(penderActionHandlers['ACTION_TYPE_PENDING'](true)).toBe(true);
-    expect(penderActionHandlers['ACTION_TYPE_SUCCESS'](true)).toBe(true);
-    expect(penderActionHandlers['ACTION_TYPE_FAILURE'](true)).toBe(true);
-})
+    expect(penderActionHandlers.ACTION_TYPE_PENDING(true)).toBe(true);
+    expect(penderActionHandlers.ACTION_TYPE_SUCCESS(true)).toBe(true);
+    expect(penderActionHandlers.ACTION_TYPE_FAILURE(true)).toBe(true);
+  });
 
-test('customized handlers of pender is working properly', () => {
+  it('customized handlers of pender is working properly', () => {
     const penderActionHandlers = pender({
-        type: 'ACTION_TYPE',
-        onPending: (state) => 'pending',
-        onSuccess: (state) => 'success',
-        onFailure: (state) => 'failure'
-    })
+      type: 'ACTION_TYPE',
+      onPending: () => 'pending',
+      onSuccess: () => 'success',
+      onFailure: () => 'failure',
+    });
 
-    expect(penderActionHandlers['ACTION_TYPE_PENDING']()).toBe('pending');
-    expect(penderActionHandlers['ACTION_TYPE_SUCCESS']()).toBe('success');
-    expect(penderActionHandlers['ACTION_TYPE_FAILURE']()).toBe('failure');
-})
+    expect(penderActionHandlers.ACTION_TYPE_PENDING()).toBe('pending');
+    expect(penderActionHandlers.ACTION_TYPE_SUCCESS()).toBe('success');
+    expect(penderActionHandlers.ACTION_TYPE_FAILURE()).toBe('failure');
+  });
+});

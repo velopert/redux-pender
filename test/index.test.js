@@ -1,20 +1,19 @@
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { handleActions, createAction } from 'redux-actions';
 import penderMiddleware, {
   penderReducer,
   createPenderAction,
   pender,
   resetPender,
-  applyPenders
-} from "../src";
-import { createStore, applyMiddleware, combineReducers } from "redux";
-import { handleActions, createAction } from "redux-actions";
+  applyPenders,
+} from '../src';
 
-const sleep = ms => {
-  return new Promise(resolve => {
+const sleep = ms =>
+  new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-};
 
-test("entire flow is working (major)", async () => {
+test('entire flow is working (major)', async () => {
   const promiseCreator = ({ triggerError, value }) => {
     const p = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -29,36 +28,30 @@ test("entire flow is working (major)", async () => {
     return p;
   };
 
-  const ACTION_TYPE = "ACTION_TYPE";
+  const ACTION_TYPE = 'ACTION_TYPE';
   const actionCreator = createAction(ACTION_TYPE, promiseCreator);
 
   const myReducer = handleActions(
     {
       ...pender({
         type: ACTION_TYPE,
-        onSuccess: (state, action) => {
-          return action.payload;
-        },
-        onCancel: (state, action) => {
-          return "cancelled";
-        }
-      })
+        onSuccess: (state, action) => action.payload,
+        onCancel: (state, action) => 'cancelled',
+      }),
     },
-    null
+    null,
   );
 
   const reducers = combineReducers({
     myReducer,
-    pender: penderReducer
+    pender: penderReducer,
   });
 
   const store = createStore(reducers, applyMiddleware(penderMiddleware()));
 
   expect(store).toBeTruthy();
 
-  const promise = store.dispatch(
-    actionCreator({ triggerError: false, value: true })
-  );
+  const promise = store.dispatch(actionCreator({ triggerError: false, value: true }));
 
   await sleep(50);
 
@@ -85,9 +78,7 @@ test("entire flow is working (major)", async () => {
   await store.dispatch(resetPender());
 
   // test promise cancellation
-  const promise3 = store.dispatch(
-    actionCreator({ triggerError: false, value: true })
-  );
+  const promise3 = store.dispatch(actionCreator({ triggerError: false, value: true }));
   await sleep(10);
   promise3.cancel();
   try {
@@ -96,10 +87,10 @@ test("entire flow is working (major)", async () => {
 
   await sleep(100);
 
-  expect(store.getState().myReducer).toBe("cancelled");
+  expect(store.getState().myReducer).toBe('cancelled');
 });
 
-test("entire flow is working (major), with applyPenders", async () => {
+test('entire flow is working (major), with applyPenders', async () => {
   const promiseCreator = ({ triggerError, value }) => {
     const p = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -114,42 +105,36 @@ test("entire flow is working (major), with applyPenders", async () => {
     return p;
   };
 
-  const ACTION_TYPE = "ACTION_TYPE";
-  const SET = "SET";
+  const ACTION_TYPE = 'ACTION_TYPE';
+  const SET = 'SET';
   const actionCreator = createAction(ACTION_TYPE, promiseCreator);
   const set = createAction(SET);
 
   const myReducer = handleActions(
     {
-      [SET]: (state, action) => action.payload
+      [SET]: (state, action) => action.payload,
     },
-    null
+    null,
   );
 
   const enhanced = applyPenders(myReducer, [
     {
       type: ACTION_TYPE,
-      onSuccess: (state, action) => {
-        return action.payload;
-      },
-      onCancel: (state, action) => {
-        return "cancelled";
-      }
-    }
+      onSuccess: (state, action) => action.payload,
+      onCancel: (state, action) => 'cancelled',
+    },
   ]);
 
   const reducers = combineReducers({
     myReducer: enhanced,
-    pender: penderReducer
+    pender: penderReducer,
   });
 
   const store = createStore(reducers, applyMiddleware(penderMiddleware()));
 
   expect(store).toBeTruthy();
 
-  const promise = store.dispatch(
-    actionCreator({ triggerError: false, value: true })
-  );
+  const promise = store.dispatch(actionCreator({ triggerError: false, value: true }));
 
   await sleep(50);
 
@@ -176,9 +161,7 @@ test("entire flow is working (major), with applyPenders", async () => {
   await store.dispatch(resetPender());
 
   // test promise cancellation
-  const promise3 = store.dispatch(
-    actionCreator({ triggerError: false, value: true })
-  );
+  const promise3 = store.dispatch(actionCreator({ triggerError: false, value: true }));
   await sleep(10);
   promise3.cancel();
   try {
@@ -187,13 +170,13 @@ test("entire flow is working (major), with applyPenders", async () => {
 
   await sleep(100);
 
-  expect(store.getState().myReducer).toBe("cancelled");
-  store.dispatch(set("value"));
+  expect(store.getState().myReducer).toBe('cancelled');
+  store.dispatch(set('value'));
 
-  expect(store.getState().myReducer).toBe("value");
+  expect(store.getState().myReducer).toBe('value');
 });
 
-test("entire flow is working (!major)", async () => {
+test('entire flow is working (!major)', async () => {
   const promiseCreator = ({ triggerError, value }) => {
     const p = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -208,39 +191,32 @@ test("entire flow is working (!major)", async () => {
     return p;
   };
 
-  const ACTION_TYPE = "ACTION_TYPE";
+  const ACTION_TYPE = 'ACTION_TYPE';
   const actionCreator = createPenderAction(ACTION_TYPE, promiseCreator);
 
   const myReducer = handleActions(
     {
       ...pender({
         type: ACTION_TYPE,
-        onSuccess: (state, action) => {
-          return action.payload;
-        }
-      })
+        onSuccess: (state, action) => action.payload,
+      }),
     },
-    null
+    null,
   );
 
   const reducers = combineReducers({
     myReducer,
-    pender: penderReducer
+    pender: penderReducer,
   });
 
-  const store = createStore(
-    reducers,
-    applyMiddleware(penderMiddleware({ major: false }))
-  );
+  const store = createStore(reducers, applyMiddleware(penderMiddleware({ major: false })));
 
   expect(store).toBeTruthy();
 
-  const promise = store.dispatch(
-    actionCreator({ triggerError: false, value: true })
-  );
+  const promise = store.dispatch(actionCreator({ triggerError: false, value: true }));
 
   // sleep 50ms
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     setTimeout(resolve, 50);
   });
 

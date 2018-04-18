@@ -1,4 +1,4 @@
-import pender from "./pender";
+import pender from './pender';
 
 /**
  * Applys penders to the reducer

@@ -7,10 +7,4 @@ import applyPenders from './applyPenders';
 
 export default middleware;
 
-export {
-    penderReducer,
-    createPenderAction,
-    pender,
-    resetPender,
-    applyPenders
-}
+export { penderReducer, createPenderAction, pender, resetPender, applyPenders };

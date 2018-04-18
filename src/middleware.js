@@ -1,13 +1,49 @@
+import EventEmitter from 'eventemitter3';
 import actionTypes from './actionTypes';
 import penderize from './penderize';
-import EventEmitter from 'eventemitter3';
 
-
-const { PENDING, SUCCESS, FAILURE, CANCEL } = actionTypes;
+const {
+  PENDING, SUCCESS, FAILURE, CANCEL,
+} = actionTypes;
 
 let _id = 0;
 function generatePenderId() {
-    return _id++
+  _id += 1;
+  return _id;
+}
+
+/**
+ * checks whether the given parameter is a promise
+ *
+ * @param {object} promise
+ * @returns {boolean}
+ */
+function isPromise(promise) {
+  if (!promise) return false;
+  return promise.then && promise.catch;
+}
+
+/**
+ * extracts promise from the action
+ *
+ * @param {object} action
+ * @returns {Promise} promise
+ */
+function getPromise(action, major) {
+  const { payload } = action;
+
+  if (!payload) return null; // there is no payload
+
+  // when 'major' option is true
+  if (major === true) {
+    if (isPromise(payload)) return payload;
+  }
+
+  // case when major is false
+  const { pend } = action.payload;
+  if (isPromise(pend)) return pend;
+
+  return null;
 }
 
 /**
@@ -15,181 +51,126 @@ function generatePenderId() {
  * @param {object} config
  * @returns {function} middleware
  */
-export default function penderMiddleware(config = { major: true, serverPender: null }) {
-    const EE = new EventEmitter();
-    
-    const {
-        major = true, 
-        serverPender = null
-    } = config;
+export default function penderMiddleware(config = { major: true }) {
+  const EE = new EventEmitter();
 
-    return store => {
-        return next => action => {
-            /**
-             * checks whether the given parameter is a promise
-             * 
-             * @param {object} promise 
-             * @returns {boolean} 
-             */
-            function isPromise(promise) {
-                if(!promise) return false;
-                return promise.then && promise.catch;
-            }
+  const { major = true } = config;
 
-            /**
-             * extracts promise from the action
-             * 
-             * @param {object} action 
-             * @returns {Promise} promise
-             */
-            function getPromise(action) {
-                const { payload } = action;
+  return store => next => (action) => {
+    const promise = getPromise(action, major); // get the promise from the action
+    if (!promise) return next(action); // if there is no promise, skip this action
 
-                if(!payload) return null;  // there is no payload
-                
-                // when 'major' option is true
-                if(major === true) {
-                    if(isPromise(payload)) return payload;
-                }
+    const { type, meta } = action; // get the details of the action
 
-                // case when major is false
-                const { pend } = action.payload;
-                if(isPromise(pend)) return pend;
+    const penderized = penderize(type); // create the penderized action types
 
-                return null;
-            }
+    // inform that the promise has started
+    store.dispatch({
+      type: penderized.PENDING,
+      meta,
+    });
 
-            
-            const promise = getPromise(action); // get the promise from the action
-            if(!promise) return next(action); // if there is no promise, skip this action
+    // log this in pender reducer
+    store.dispatch({
+      type: PENDING,
+      payload: type,
+    });
 
+    // handle the promise
+    let cancelled = false;
+    const penderId = generatePenderId();
 
-            
-            const { type, meta } = action; // get the details of the action
+    let handleCancel = null;
+    let handleResolve = null;
 
-            const penderized = penderize(type); // create the penderized action types
+    const unsubscribe = () => {
+      EE.removeListener('cancel', handleCancel);
+      EE.removeListener('resolve', handleResolve);
+    };
 
+    const cancel = () => {
+      EE.emit('cancel', penderId);
+    };
 
-            // inform that the promise has started
+    const resolveCancellation = () => {
+      EE.emit('resolve', penderId);
+    };
+
+    const cancellation = type =>
+      new Promise((resolve, reject) => {
+        handleCancel = (id) => {
+          if (id === penderId) {
+            cancelled = true;
+            unsubscribe();
             store.dispatch({
-                type: penderized.PENDING,
-                meta
+              type: CANCEL,
+              payload: type,
             });
-
-            // log this in pender reducer
             store.dispatch({
-                type: PENDING,
-                payload: type
-            })
+              type: penderized.CANCEL,
+              meta,
+            });
+            reject(new Error(`${type}(${id}) is cancelled`));
+          }
+        };
 
+        handleResolve = (id) => {
+          if (id === penderId) {
+            unsubscribe();
+            resolve();
+          }
+        };
 
+        EE.once('cancel', handleCancel);
+        EE.once('resolve', handleResolve);
+      });
 
-            // handle the promise
-            let cancelled = false;
-            const penderId = generatePenderId();
+    promise
+      .then((result) => {
+        if (cancelled) return;
+        resolveCancellation();
 
-            let handleCancel = null;
-            let handleResolve = null;
+        // promise is resolved
+        // result will be assigned as payload
+        store.dispatch({
+          type: penderized.SUCCESS,
+          payload: result,
+          meta,
+        });
 
-            const unsubscribe = () => {
-                EE.removeListener('cancel', handleCancel);
-                EE.removeListener('resolve', handleResolve);
-            };
+        // log this in pender reducer
+        store.dispatch({
+          type: SUCCESS,
+          payload: type,
+        });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        resolveCancellation();
 
-            const cancel = () => {
-                EE.emit('cancel', penderId);
-            };
-
-            const resolveCancellation = () => {
-                EE.emit('resolve', penderId);
-            }
-            
-            const cancellation = (type) => {
-                return new Promise((resolve, reject) => {
-                    handleCancel = (id) => {
-                        if(id === penderId) {
-                            cancelled = true;
-                            unsubscribe();
-                            store.dispatch({
-                                type: CANCEL,
-                                payload: type
-                            })
-                            store.dispatch({
-                                type: penderized.CANCEL,
-                                meta
-                            });
-                            reject(new Error(`${type}(${id}) is cancelled`));
-                        }
-                    };
-
-                    handleResolve = (id) => {
-                        if(id === penderId) {
-                            unsubscribe();
-                            resolve();
-                        }
-                    };
-
-
-                    EE.once('cancel', handleCancel);
-                    EE.once('resolve', handleResolve);
-                })
-            };
-
-            
-            const p = promise.then(
-                (result) => {
-                    if(cancelled) return;
-                    resolveCancellation();
-
-                    // promise is resolved
-                    // result will be assigned as payload
-                    store.dispatch({
-                        type: penderized.SUCCESS,
-                        payload: result,
-                        meta
-                    });
-
-                    // log this in pender reducer
-                    store.dispatch({
-                        type: SUCCESS,
-                        payload: type
-                    })
-                }
-            ).catch(
-                (error) => {
-                    if(cancelled) return;
-                    resolveCancellation();
-
-                    if(process.env.NODE_ENV === 'development') {
-                        // print error in development environment
-                        console.error(error);
-                    }
-                    // promise is rejected
-                    // error will be assigned as payload
-                    store.dispatch({
-                        type: penderized.FAILURE,
-                        payload: error,
-                        meta,
-                        error: true
-                    });
-
-                    // log this in pender reducer
-                    store.dispatch({
-                        type: FAILURE,
-                        payload: type
-                    })
-                }
-            );
-
-            const cancellablePromise = Promise.race([promise, cancellation(type)]);
-            cancellablePromise.cancel = cancel;
-            
-
-            if(serverPender) {
-                serverPender.register(cancellablePromise);
-            }
-
-            return cancellablePromise;
+        if (process.env.NODE_ENV === 'development') {
+          // print error in development environment
+          console.error(error);
         }
-    }
+        // promise is rejected
+        // error will be assigned as payload
+        store.dispatch({
+          type: penderized.FAILURE,
+          payload: error,
+          meta,
+          error: true,
+        });
+
+        // log this in pender reducer
+        store.dispatch({
+          type: FAILURE,
+          payload: type,
+        });
+      });
+
+    const cancellablePromise = Promise.race([promise, cancellation(type)]);
+    cancellablePromise.cancel = cancel;
+
+    return cancellablePromise;
+  };
 }

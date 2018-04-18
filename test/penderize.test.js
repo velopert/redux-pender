@@ -1,7 +1,10 @@
 import penderize from '../src/penderize';
 
-test('penderize', () => {
-    expect(penderize('ACTION')).toHaveProperty('PENDING', 'ACTION_PENDING');
-    expect(penderize('ACTION')).toHaveProperty('SUCCESS', 'ACTION_SUCCESS');
-    expect(penderize('ACTION')).toHaveProperty('FAILURE', 'ACTION_FAILURE');
+describe('penderize', () => {
+  const penderized = penderize('ACTION');
+  it('has all three proper properties', () => {
+    expect(penderized).toHaveProperty('PENDING', 'ACTION_PENDING');
+    expect(penderized).toHaveProperty('SUCCESS', 'ACTION_SUCCESS');
+    expect(penderized).toHaveProperty('FAILURE', 'ACTION_FAILURE');
+  });
 });

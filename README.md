@@ -147,44 +147,37 @@ Do you want to do something when the action starts or fails? It is simple.
 When you omit one of those function, `(state, action) => state` will be the default value.
 Additionally, it is not recommended to manage the status of request in your own reducer, because the penderReducer will do this for you. You just need to care about the result of your task in your reducer.
 
-#### Not using handleActions?
-
-Are you not using handleActions? It is fine. You can still use the pender:
+#### applyPenders - helper function that allows you to apply penders super easily.
 
 ```javascript
-const penders = {
-    ...pender({
+
+import { handleActions } from 'redux-actions';
+import { pender, applyPenders } from 'redux-pender';
+
+const initialState = { 
+    post: {}
+}
+
+const reducer = handleActions({
+    // ... some other action handlers...
+}, initialState);
+
+export default applyPenders(reducer, [
+    {
         type: LOAD_POST,
+        onPending: (state, action) => {
+            return state; // do something
+        },
         onSuccess: (state, action) => {
             return {
                 post: action.payload.data
-            };
+            }
+        },
+        onFailure: (state, action) => {
+            return state; // do something
         }
-    }),
-    // another penders... 
-}
-
-
-export default function reducer(state, action) {
-    if(penders[action.type]) {
-        return penders[action.type](state, action);
     }
-
-    switch(action.type) {
-        /* your own reducer logic.. */
-    }
-}
-```
-
-#### Not using spread operator (`...`) ?
-If you are not using spread operator, don't worry. You can use `Object.assign` alternatively.
-```javascript
-const requests = Object.assign(
-    pender(...), 
-    pender(...)
-);
-
-// same codes...
+])
 ```
 
 ### Cancellation

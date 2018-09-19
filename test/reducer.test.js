@@ -1,5 +1,5 @@
 import { createStore } from 'redux';
-import reducer from '../src/reducer';
+import reducer from '../lib/penderReducer';
 
 describe('pender reducer', () => {
   it('successfully initializes store', () => {

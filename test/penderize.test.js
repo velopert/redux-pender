@@ -1,4 +1,4 @@
-import penderize from '../src/penderize';
+import { penderize } from '../lib/utils';
 
 describe('penderize', () => {
   const penderized = penderize('ACTION');

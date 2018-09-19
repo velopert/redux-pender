@@ -6,12 +6,13 @@ import penderMiddleware, {
   pender,
   resetPender,
   applyPenders,
-} from '../src';
+} from '../lib';
 
-const sleep = ms =>
-  new Promise((resolve) => {
+const sleep = ms => {
+  return new Promise(resolve => {
     setTimeout(resolve, ms);
   });
+};
 
 test('entire flow is working (major)', async () => {
   const promiseCreator = ({ triggerError, value }) => {
@@ -35,11 +36,15 @@ test('entire flow is working (major)', async () => {
     {
       ...pender({
         type: ACTION_TYPE,
-        onSuccess: (state, action) => action.payload,
-        onCancel: (state, action) => 'cancelled',
+        onSuccess: (state, action) => {
+          return action.payload;
+        },
+        onCancel: (state, action) => {
+          return 'cancelled';
+        },
       }),
     },
-    null,
+    null
   );
 
   const reducers = combineReducers({
@@ -51,7 +56,9 @@ test('entire flow is working (major)', async () => {
 
   expect(store).toBeTruthy();
 
-  const promise = store.dispatch(actionCreator({ triggerError: false, value: true }));
+  const promise = store.dispatch(
+    actionCreator({ triggerError: false, value: true })
+  );
 
   await sleep(50);
 
@@ -78,7 +85,9 @@ test('entire flow is working (major)', async () => {
   await store.dispatch(resetPender());
 
   // test promise cancellation
-  const promise3 = store.dispatch(actionCreator({ triggerError: false, value: true }));
+  const promise3 = store.dispatch(
+    actionCreator({ triggerError: false, value: true })
+  );
   await sleep(10);
   promise3.cancel();
   try {
@@ -114,14 +123,18 @@ test('entire flow is working (major), with applyPenders', async () => {
     {
       [SET]: (state, action) => action.payload,
     },
-    null,
+    null
   );
 
   const enhanced = applyPenders(myReducer, [
     {
       type: ACTION_TYPE,
-      onSuccess: (state, action) => action.payload,
-      onCancel: (state, action) => 'cancelled',
+      onSuccess: (state, action) => {
+        return action.payload;
+      },
+      onCancel: (state, action) => {
+        return 'cancelled';
+      },
     },
   ]);
 
@@ -134,7 +147,9 @@ test('entire flow is working (major), with applyPenders', async () => {
 
   expect(store).toBeTruthy();
 
-  const promise = store.dispatch(actionCreator({ triggerError: false, value: true }));
+  const promise = store.dispatch(
+    actionCreator({ triggerError: false, value: true })
+  );
 
   await sleep(50);
 
@@ -161,7 +176,9 @@ test('entire flow is working (major), with applyPenders', async () => {
   await store.dispatch(resetPender());
 
   // test promise cancellation
-  const promise3 = store.dispatch(actionCreator({ triggerError: false, value: true }));
+  const promise3 = store.dispatch(
+    actionCreator({ triggerError: false, value: true })
+  );
   await sleep(10);
   promise3.cancel();
   try {
@@ -198,10 +215,12 @@ test('entire flow is working (!major)', async () => {
     {
       ...pender({
         type: ACTION_TYPE,
-        onSuccess: (state, action) => action.payload,
+        onSuccess: (state, action) => {
+          return action.payload;
+        },
       }),
     },
-    null,
+    null
   );
 
   const reducers = combineReducers({
@@ -209,14 +228,19 @@ test('entire flow is working (!major)', async () => {
     pender: penderReducer,
   });
 
-  const store = createStore(reducers, applyMiddleware(penderMiddleware({ major: false })));
+  const store = createStore(
+    reducers,
+    applyMiddleware(penderMiddleware({ major: false }))
+  );
 
   expect(store).toBeTruthy();
 
-  const promise = store.dispatch(actionCreator({ triggerError: false, value: true }));
+  const promise = store.dispatch(
+    actionCreator({ triggerError: false, value: true })
+  );
 
   // sleep 50ms
-  await new Promise((resolve) => {
+  await new Promise(resolve => {
     setTimeout(resolve, 50);
   });
 

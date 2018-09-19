@@ -1,14 +1,6 @@
-import actionTypes from './actionTypes';
+import { actionTypes } from './utils';
 
-const {
-  PENDING, SUCCESS, FAILURE, RESET, CANCEL,
-} = actionTypes;
-
-/*
-    reducer that manages the penders
-    state[PENDER_ACTION] is true when promise is pending,
-    when it resolves or rejects, it will turn false
-*/
+const { PENDING, SUCCESS, FAILURE, RESET, CANCEL } = actionTypes;
 
 const initialState = {
   pending: {},
@@ -16,7 +8,15 @@ const initialState = {
   failure: {},
 };
 
-export default function penderReducer(state = initialState, action) {
+type PenderAction = {
+  type: string;
+  payload: string;
+};
+
+export default function penderReducer(
+  state = initialState,
+  action: PenderAction
+) {
   switch (action.type) {
     case PENDING:
       return {

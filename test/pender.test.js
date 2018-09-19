@@ -1,4 +1,4 @@
-import pender from '../src/pender';
+import { pender } from '../lib/utils';
 
 describe('pender', () => {
   it('default handlers of pender is working properly', () => {

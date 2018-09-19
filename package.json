@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "rm -rf ./lib && babel src --presets=es2015,stage-0 --out-dir lib",
+    "build": "tsc",
     "prepublish": "npm run build",
     "test": "jest"
   },
@@ -15,11 +15,14 @@
     "eslint-plugin-jest": "^21.15.0",
     "jest": "^20.0.0",
     "prettier-eslint": "^8.8.1",
-    "redux": "^3.6.0",
-    "redux-actions": "^2.0.2"
+    "redux": "^4.0.0",
+    "redux-actions": "^2.0.2",
+    "tslint-config-airbnb": "^5.9.2",
+    "tslint-config-prettier": "^1.14.0",
+    "typescript": "^3.0.1"
   },
   "name": "redux-pender",
-  "version": "1.2.1",
+  "version": "2.0.2",
   "description": "redux middleware that helps to manages async actions based on promise",
   "repository": {
     "type": "git",
@@ -39,6 +42,6 @@
   ],
   "homepage": "https://github.com/velopert/redux-actions#readme",
   "dependencies": {
-    "eventemitter3": "^2.0.3"
+    "proxy-polyfill": "^0.3.0"
   }
 }

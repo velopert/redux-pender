@@ -4,13 +4,15 @@
   "private": true,
   "dependencies": {
     "axios": "^0.16.1",
+    "immer": "^1.5.0",
+    "proxy-polyfill": "^0.3.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",
     "redux": "^3.6.0",
     "redux-actions": "^2.0.2",
     "redux-logger": "^3.0.1",
-    "redux-pender": "next"
+    "redux-pender": "^2.0.2"
   },
   "devDependencies": {
     "react-scripts": "0.9.5"

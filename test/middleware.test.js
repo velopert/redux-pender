@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
-import middleware from '../src/middleware';
-import reducer from '../src/reducer';
+import middleware from '../lib/middleware';
+import reducer from '../lib/penderReducer';
 
 let store = null;
 

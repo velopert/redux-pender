@@ -9,6 +9,7 @@ export interface CancellablePromise<T> extends Promise<T> {
 const { PENDING, SUCCESS, FAILURE, CANCEL } = actionTypes;
 
 let _id = 0;
+
 function generatePenderId() {
   _id += 1;
   return _id;

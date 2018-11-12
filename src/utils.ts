@@ -1,4 +1,7 @@
-import { AnyAction } from 'redux';
+import { AnyAction as ReduxAnyAction } from 'redux';
+import { Action } from 'redux-actions';
+
+type AnyAction = ReduxAnyAction | Action<any>;
 
 export const actionTypes = {
   PENDING: '@@redux-pender/PENDING',

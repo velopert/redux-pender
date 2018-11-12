@@ -42,6 +42,7 @@
   ],
   "homepage": "https://github.com/velopert/redux-actions#readme",
   "dependencies": {
+    "@types/redux-actions": "^2.3.1",
     "proxy-polyfill": "^0.3.0"
   }
 }

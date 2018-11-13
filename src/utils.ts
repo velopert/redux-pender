@@ -45,10 +45,10 @@ export function pender<S>(pendInfo: PendInfo<S>) {
   };
 }
 
-type Reducer<S> = (state: S, action: any) => S;
+type Reducer<S> = (state: S | undefined, action: any) => S;
 
 export function applyPenders<S>(
-  reducer: (state: S, action: any) => S,
+  reducer: (state: S | undefined, action: any) => S,
   penderInfos: PendInfo<S>[]
 ) {
   const penders = penderInfos.map(pender);
@@ -61,8 +61,8 @@ export function applyPenders<S>(
       updaters[key] = p[key];
     });
   });
-  const enhancedReducer: Reducer<S> = (state: S, action: any) => {
-    if (!action) return state;
+  const enhancedReducer: Reducer<S> = (state: S | undefined, action: any) => {
+    if (!action || !state) return reducer(state, action);
     if (updaters[action.type]) {
       return updaters[action.type](state, action);
     }

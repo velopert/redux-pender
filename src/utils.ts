@@ -62,7 +62,7 @@ export function applyPenders<S>(
     });
   });
   const enhancedReducer: Reducer<S> = (state: S | undefined, action: any) => {
-    if (!action || !state) return reducer(state, action);
+    if (!action || state === undefined) return reducer(state, action);
     if (updaters[action.type]) {
       return updaters[action.type](state, action);
     }

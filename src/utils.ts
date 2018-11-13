@@ -1,7 +1,4 @@
-import { AnyAction as ReduxAnyAction } from 'redux';
-import { Action } from 'redux-actions';
-
-type AnyAction = ReduxAnyAction | Action<any>;
+import { AnyAction } from 'redux';
 
 export const actionTypes = {
   PENDING: '@@redux-pender/PENDING',
@@ -50,8 +47,10 @@ export function pender<S>(pendInfo: PendInfo<S>) {
 
 type Reducer<S> = (state: S, action?: AnyAction) => S;
 
+type AnyReducer<S> = (state: S, action: any) => S;
+
 export function applyPenders<S>(
-  reducer: Reducer<S>,
+  reducer: AnyReducer<S>,
   penderInfos: PendInfo<S>[]
 ) {
   const penders = penderInfos.map(pender);

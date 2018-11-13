@@ -8,6 +8,16 @@ const initialState = {
   failure: {},
 };
 
+type StatusMap = {
+  [type: string]: boolean;
+};
+
+export type PenderState = {
+  pending: StatusMap;
+  success: StatusMap;
+  failure: StatusMap;
+};
+
 type PenderAction = {
   type: string;
   payload: string;

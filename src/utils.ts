@@ -1,5 +1,3 @@
-import { AnyAction } from 'redux';
-
 export const actionTypes = {
   PENDING: '@@redux-pender/PENDING',
   SUCCESS: '@@redux-pender/SUCCESS',
@@ -17,13 +15,15 @@ export function penderize(type: string) {
   };
 }
 
+type AnyReducer<S> = ((state: S, action: any) => S) | ((state: S) => S);
+
 interface PendInfo<S> {
   type: string;
-  onPending?: (state: S, action?: AnyAction) => S;
-  onSuccess?: (state: S, action?: AnyAction) => S;
-  onFailure?: (state: S, action?: AnyAction) => S;
-  onError?: (state: S, action?: AnyAction) => S; // alias of onFailure
-  onCancel?: (state: S, action?: AnyAction) => S;
+  onPending?: AnyReducer<S>;
+  onSuccess?: AnyReducer<S>;
+  onFailure?: AnyReducer<S>;
+  onError?: AnyReducer<S>; // alias of onFailure
+  onCancel?: AnyReducer<S>;
 }
 
 export function pender<S>(pendInfo: PendInfo<S>) {
@@ -45,17 +45,15 @@ export function pender<S>(pendInfo: PendInfo<S>) {
   };
 }
 
-type Reducer<S> = (state: S, action?: AnyAction) => S;
-
-type AnyReducer<S> = (state: S, action: any) => S;
+type Reducer<S> = (state: S, action: any) => S;
 
 export function applyPenders<S>(
-  reducer: AnyReducer<S>,
+  reducer: (state: S, action: any) => S,
   penderInfos: PendInfo<S>[]
 ) {
   const penders = penderInfos.map(pender);
   const updaters: {
-    [x: string]: (state: S, action?: AnyAction) => S;
+    [x: string]: (state: S, action: any) => S;
   } = {};
   penders.forEach(p => {
     const keys = Object.keys(p);
@@ -63,7 +61,7 @@ export function applyPenders<S>(
       updaters[key] = p[key];
     });
   });
-  const enhancedReducer: Reducer<S> = (state: S, action?: AnyAction) => {
+  const enhancedReducer: Reducer<S> = (state: S, action: any) => {
     if (!action) return state;
     if (updaters[action.type]) {
       return updaters[action.type](state, action);

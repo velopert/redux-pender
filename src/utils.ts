@@ -98,3 +98,6 @@ export function createPenderAction(
     };
   };
 }
+
+type ArgumentsType<T> = T extends (...args: infer A) => any ? A : never;
+export type ReturnAny<F> = (...args: ArgumentsType<F>) => any;

@@ -1,6 +1,6 @@
 import 'proxy-polyfill';
 import { actionTypes, penderize } from './utils';
-import { Store, Action, Dispatch, AnyAction } from 'redux';
+import { Dispatch, AnyAction, MiddlewareAPI, Middleware } from 'redux';
 
 export interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
@@ -39,9 +39,9 @@ type MiddlewareConfig = {
 
 export default function penderMiddleware(
   config: MiddlewareConfig = { major: true }
-) {
+): Middleware<any, any, any> {
   const major = config.major === undefined ? true : config.major;
-  return (store: Store<any>) => (next: Dispatch<AnyAction>) => (
+  return (store: MiddlewareAPI<any>) => (next: Dispatch<AnyAction>) => (
     action: AnyAction
   ) => {
     // retrieve Promise if possible

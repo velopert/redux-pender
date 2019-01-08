@@ -23,7 +23,7 @@
     "typescript": "^3.0.1"
   },
   "name": "redux-pender",
-  "version": "2.0.9",
+  "version": "2.0.11",
   "description": "redux middleware that helps to manages async actions based on promise",
   "repository": {
     "type": "git",

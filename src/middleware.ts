@@ -35,7 +35,7 @@ function getPromise(action: any, major: boolean): Promise<any> | null {
 
 type MiddlewareConfig = {
   major: boolean;
-  raw: false;
+  raw: boolean;
 };
 
 export default function penderMiddleware(

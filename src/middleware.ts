@@ -35,10 +35,11 @@ function getPromise(action: any, major: boolean): Promise<any> | null {
 
 type MiddlewareConfig = {
   major: boolean;
+  raw: false;
 };
 
 export default function penderMiddleware(
-  config: MiddlewareConfig = { major: true }
+  config: MiddlewareConfig = { major: true, raw: false }
 ): Middleware<any, any, any> {
   const major = config.major === undefined ? true : config.major;
   return (store: MiddlewareAPI<any>) => (next: Dispatch<AnyAction>) => (
@@ -147,6 +148,14 @@ export default function penderMiddleware(
       cancelPromise,
     ]) as CancellablePromise<any>;
     cancellablePromise.cancel = cancel;
+
+    if (config.raw) {
+      return {
+        type,
+        meta,
+        payload: cancellablePromise,
+      };
+    }
 
     return cancellablePromise;
   };

@@ -54,16 +54,15 @@ export default function penderMiddleware(
 
     let cancelled = false;
 
-    // promise start
-    store.dispatch({
-      type: actions.PENDING,
-      meta,
-    });
-
     // inform pender reducer
     store.dispatch({
       type: PENDING,
       payload: type,
+    });
+    // promise start
+    store.dispatch({
+      type: actions.PENDING,
+      meta,
     });
 
     // use proxy to handle promise cancellation
@@ -111,16 +110,16 @@ export default function penderMiddleware(
         proxy.resolve = true;
         proxy = null;
 
+        // inform pender reducer
+        store.dispatch({
+          type: SUCCESS,
+          payload: type,
+        });
         // promise resolved
         store.dispatch({
           type: actions.SUCCESS,
           payload: result,
           meta,
-        });
-        // inform pender reducer
-        store.dispatch({
-          type: SUCCESS,
-          payload: type,
         });
       })
       .catch((e: Error) => {
@@ -129,17 +128,17 @@ export default function penderMiddleware(
         proxy.resolve = true;
         proxy = null;
 
+        // inform pender reducer
+        store.dispatch({
+          type: FAILURE,
+          payload: type,
+        });
         // promise rejected
         store.dispatch({
           type: actions.FAILURE,
           payload: e,
           error: true,
           meta,
-        });
-        // inform pender reducer
-        store.dispatch({
-          type: FAILURE,
-          payload: type,
         });
       });
 

@@ -7,7 +7,7 @@
   "main": "./lib/index.js",
   "devDependencies": {
     "@types/redux-actions": "^2.3.1",
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.19.1",
@@ -23,7 +23,7 @@
     "typescript": "^3.0.1"
   },
   "name": "redux-pender",
-  "version": "2.0.12",
+  "version": "2.0.14",
   "description": "redux middleware that helps to manages async actions based on promise",
   "repository": {
     "type": "git",
@@ -43,6 +43,6 @@
   ],
   "homepage": "https://github.com/velopert/redux-actions#readme",
   "dependencies": {
-    "proxy-polyfill": "^0.3.0"
+    "proxy-polyfill": "^0.3.1"
   }
 }

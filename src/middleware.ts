@@ -1,4 +1,4 @@
-import 'proxy-polyfill';
+import ProxyPolyfill from 'proxy-polyfill/src/proxy';
 import { actionTypes, penderize } from './utils';
 import { Dispatch, AnyAction, MiddlewareAPI, Middleware } from 'redux';
 
@@ -96,7 +96,10 @@ export default function penderMiddleware(
           return true;
         },
       };
-      proxy = new Proxy<any>(origin, handler);
+      proxy = new (typeof Proxy === 'undefined' ? ProxyPolyfill : Proxy)(
+        origin,
+        handler
+      );
     });
 
     const cancel = () => {

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.16.1",
+    "axios": "^0.21.1",
     "immer": "^1.5.0",
     "proxy-polyfill": "^0.3.0",
     "react": "^15.5.4",
